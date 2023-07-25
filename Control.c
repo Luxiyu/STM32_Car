@@ -339,6 +339,8 @@ void Track_mode(uint8_t Data[4]){
 void Vision_mode(uint8_t Data[4]){
 	uint8_t Speed_left;
 	uint8_t Speed_right;
+	printf("Speed_left:%d\r\n",Speed_left);
+	printf("Speed_right:%d\r\n",Speed_right);
 	switch (Data[0]) { //左
 			case 0x01:
 				__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, Speed_right);
