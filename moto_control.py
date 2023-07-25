@@ -92,20 +92,25 @@ class motor_property():
 motor = motor_property()                                    # 实例化电机类 motor_property() 为 motor
 motor.motor1 = 50                                           # 电机1的占空比 初始设置为 50%
 motor.motor2 = 50                                           # 电机2的占空比 初始设置为 50%
+old_err = 0
+Kp = 0.046
+Kd = 0
+Speed = 25 #期望速度
 
 # 定义电机占空比控制函数
 def motor_control(motor, x):
-    val = 0
-    if x < motor.control_x:                                 # 若 当前坐标 小于 被控坐标x 即当前状态小车在目标的 左边
-        val = (motor.control_x - x) * 0.3125                # 获取坐标差值 并转换为 0~50 之间的值
-        motor.motor1 = 50 - val                             # 减小 电机1 占空比 电机1为左电机 使小车右转
-        motor.motor2 = 50 + val                             # 增大 电机2 占空比 电机2为右电机 使小车右转
-
-    elif x > motor.control_x:                               # 若 当前坐标 大于 被控坐标x 即当前状态小车在目标的 右边
-        val = (x - motor.control_x) * 0.3125                # 获取坐标差值 并转换为 0~50 之间的值
-        motor.motor1 = 50 + val                             # 增大 电机1 占空比 电机1为左电机 使小车左转
-        motor.motor2 = 50 - val                             # 减小 电机2 占空比 电机2为右电机 使小车左转
-
+    err = x - motor.control_x
+    motor.motor1 = Speed - (Kp*err+Kd*(err-old_err))
+    motor.motor2 = Speed + (Kp*err+Kd*(err-old_err))
+    # speed=25
+    # example: x = 220
+    # err = 220-160 = 60
+    # speed_left = 25 - (0.08*60+kd*(err-old_err))
+    # old_err = err
+    # x = 280
+    #err = 280 - 160 = 40
+    # speed_left = 25 - (0.08*60+kd*(40-60))
+    old_err = err
     motor.motor1 = int(motor.motor1)                        # 将 电机1占空比 转换为 整数
     motor.motor2 = int(motor.motor2)                        # 将 电机1占空比 转换为 整数
 
